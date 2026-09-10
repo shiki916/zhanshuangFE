@@ -1,0 +1,58 @@
+@scope (.game-platform) {
+.table-field-slot .live-stats {
+  position: absolute;
+  left: 3px;
+  bottom: 3px;
+  z-index: 4;
+  padding: 2px 4px;
+  background: #07131deb;
+  color: #7fe2ff;
+  font-size: 10px;
+}
+
+.choice-hint { color: #9cc2d8; }
+
+.effect-choice-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(125px, 1fr));
+  gap: 10px;
+  max-height: 58vh;
+  overflow: auto;
+}
+
+.effect-choice-grid button {
+  padding: 6px;
+  border: 2px solid #35586f;
+  border-radius: 6px;
+  background: #0c2030;
+  color: #d9f3ff;
+  cursor: pointer;
+}
+
+.effect-choice-grid button.chosen {
+  border-color: #f5a742;
+  box-shadow: 0 0 14px #f5a74277;
+}
+
+.effect-choice-grid img {
+  display: block;
+  width: 100%;
+  aspect-ratio: 5 / 7;
+  object-fit: cover;
+  border-radius: 4px;
+}
+
+.effect-choice-grid span {
+  display: block;
+  margin-top: 5px;
+  font-size: 11px;
+  line-height: 1.4;
+}
+
+.effect-option-grid { display: grid; gap: 10px; }
+.effect-option-grid button { padding: 14px; border: 2px solid #35586f; border-radius: 6px; background: #0c2030; color: #d9f3ff; cursor: pointer; text-align: left; }
+.effect-option-grid button.chosen { border-color: #f5a742; box-shadow: 0 0 14px #f5a74277; }
+.activated-abilities { display: grid; gap: 8px; margin: 10px 0; }
+
+}
+

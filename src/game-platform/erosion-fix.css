@@ -1,0 +1,12 @@
+@scope (.game-platform) {
+.erosion-track{
+  grid-template-columns:repeat(8,minmax(0,1fr));
+  grid-template-rows:1fr;
+}
+.erosion-track span{
+  min-width:0;
+  font-size:12px;
+}
+
+}
+

@@ -1,122 +1,190 @@
-<p align="center">
-	<img alt="logo" src="https://oscimg.oschina.net/oscnet/up-d3d0a9303e11d522a06cd263f3079027715.png">
-</p>
-<h1 align="center" style="margin: 30px 0 30px; font-weight: bold;">RuoYi v3.9.2</h1>
-<h4 align="center">基于SpringBoot+Vue3前后端分离的Java快速开发框架</h4>
-<p align="center">
-	<a href="https://gitee.com/y_project/RuoYi-Vue/stargazers"><img src="https://gitee.com/y_project/RuoYi-Vue/badge/star.svg?theme=dark"></a>
-	<a href="https://gitee.com/y_project/RuoYi-Vue"><img src="https://img.shields.io/badge/RuoYi-v3.9.2-brightgreen.svg"></a>
-	<a href="https://gitee.com/y_project/RuoYi-Vue/blob/master/LICENSE"><img src="https://img.shields.io/github/license/mashape/apistatus.svg"></a>
-</p>
+# 站台 · 卡牌对战平台 - 前端（zhanshuangFE）
 
-## 平台简介
+> 基于 [RuoYi-Vue3](https://gitee.com/y_project/RuoYi-Vue) v3.9.2 二次开发的**集换式卡牌对战模拟器前端**，与后端仓库 [`zhanshuangHoutai`](https://github.com/shiki916/zhanshuangHoutai) 配套使用。
 
-* 本仓库为前端技术栈 [Vue3](https://v3.cn.vuejs.org) + [Element Plus](https://element-plus.org/zh-CN) + [Vite](https://cn.vitejs.dev) 版本。
-* 配套后端代码仓库地址[RuoYi-Vue](https://gitee.com/y_project/RuoYi-Vue) 或 [RuoYi-Vue-fast](https://gitcode.com/yangzongzhuan/RuoYi-Vue-fast) 版本。
-* 阿里云折扣场：[点我进入](http://aly.ruoyi.vip)，腾讯云秒杀场：[点我进入](http://txy.ruoyi.vip)&nbsp;&nbsp;
+---
 
-# 版本对比
+## 1. 项目是干什么的？
 
-RuoYi-Vue 前端项目的三个主要演进版本，方便你直观对比其技术栈差异（并行开发维护）。
+这是一个**1v1 卡牌对战（TCG/CCG）模拟器**的运营管理 + 对战界面前端，重点服务于"自研卡牌"的规则演练、组卡管理、对局回放。
 
-| 项目名称      | **RuoYi-Vue2** | **RuoYi-Vue3** | **RuoYi-Vue3-TypeScript**   |
-| :---          | :---           | :---           | :---                        |
-| **前端框架**  | Vue 2         | Vue 3          | Vue 3                       |
-| **脚本语言**  | JavaScript    | JavaScript     | TypeScript                  |
-| **构建工具**  | Vue CLI       | Vite           | Vite                        |
-| **UI 组件库** | Element UI    | Element Plus   | Element Plus                |
-| **状态管理**  | Vuex          | Pinia          | Pinia                       |
-| **路由管理**  | Vue Router 3  | Vue Router 4   | Vue Router 4                |
-| **核心特点**  | 1. 技术栈经典稳定<br>2. 社区资料丰富<br>3. 当前维护重心已转移 | 1. 现代前端技术栈<br>2. 开发体验与性能更优<br>3. 官方主推的活跃版本 | 1. 类型加持，减少沟通成本<br>2. 开发时有提示，效率更高<br>3. 多人协作企业级开发项目 |
-| **仓库地址**  | [RuoYi-Vue2](https://gitcode.com/yangzongzhuan/RuoYi-Vue2) | [RuoYi-Vue3](https://gitcode.com/yangzongzhuan/RuoYi-Vue3) | [RuoYi-Vue3-TypeScript](https://gitcode.com/yangzongzhuan/RuoYi-Vue3/tree/typescript) |
+### 已落地的玩法核心（前端可见部分）
 
-## 前端运行
+- **标准/有序 两种起手模式**：先手 / 后手由系统随机指定，先手玩家优先进行"换牌（Mulligan）"。
+- **50 张构筑牌组**：双方必须正好 50 张牌才能开战，牌组可命名、保存、复用。
+- **侵蚀（Erosion）生命体系**：每位玩家有 `erosion / 7` 的"侵蚀"生命值，每承受 1 次伤害，侵蚀数 +1；当某玩家侵蚀达到 7 时失败。界面顶部为双方摘要，下方为侵蚀轨道。
+- **战场分区**：左右两块大棋盘（玩家一、玩家二），每边包含 5 格战场（Battlefield）、牌组区、墓地、套牌预览、手牌、侵蚀计数区 6 个分区。
+- **完整的战斗流程**：换牌 → 抽牌 → 攻/防摆放 → 触发卡牌效果（已实现自动 resolution）→ 回合推进。
+- **自动效果解析 + 人工接管**：若某张卡的效果未在 `engine/effect` 中预置编码，对局会被 `halt` 住，弹窗保留现场，可人工补判，避免数据丢失。
+- **规则表浏览（rules-table）**：可开 `complete-table` 页面查看双方完整版面，便于远端裁判或复盘。
+- **组卡管理**：在 `src/game-platform/stores/decks` 下用 Pinia 管理保存的多套牌组。
 
-```bash
-# 克隆项目
-git clone https://github.com/yangzongzhuan/RuoYi-Vue3.git
+> 这套前端不仅是个对战 UI，更是一个**对局引擎的"驾驶舱"**——所有规则判定都由后端 `ruoyi-game` 完成，前端只负责渲染与操作。
 
-# 进入项目目录
-cd RuoYi-Vue3
+### 与标准 RuoYi 模板的差异
 
-# 安装依赖
-yarn --registry=https://registry.npmmirror.com
+| 区域 | 原 RuoYi | 本项目 |
+| --- | --- | --- |
+| `src/views/` | 系统管理类页面 | 系统管理 + 新增「对战平台」菜单（`src/game-platform/views`） |
+| `src/game-platform/` | 不存在 | 本项目**增量**目录：平台入口、对局界面、组卡 store、卡牌 service |
+| `vite.config.js` | 默认后端 `localhost:8080` | 保持默认，可直接对接后端 |
+| 路由 | RuoYi 静态菜单 | 增加 `/game-platform/*` 一组动态菜单（在 RuoYi「菜单管理」里挂载） |
 
-# 启动服务
-yarn dev
+---
 
-# 构建测试环境 yarn build:stage
-# 构建生产环境 yarn build:prod
-# 前端访问地址 http://localhost:80
+## 2. 技术栈
+
+| 层 | 选型 | 版本 |
+| --- | --- | --- |
+| 框架 | Vue | 3.5.26 |
+| UI | Element Plus | 2.13.1 |
+| 构建 | Vite | 6.4.1 |
+| 状态管理 | Pinia | 3.0.4 |
+| 路由 | Vue Router | 4.6.4 |
+| 图表 | ECharts | 5.6.0（监控页用） |
+| 请求 | Axios | 1.13.2 |
+| 富文本 | @vueup/vue-quill | 1.2.0 |
+| 工具 | js-cookie / nprogress / fuse.js / jsencrypt / papaparse | — |
+
+> 若启用 TypeScript 模块（`game-platform/*.ts`），已内置路径别名 `@` → `src/` 与 `~` → 项目根。
+
+---
+
+## 3. 目录结构（重点部分）
+
+```
+src/
+├── api/                     # RuoYi 内置：登录/用户/角色等 RESTful 请求
+├── layout/                  # RuoYi 内置：总体布局、侧边栏、顶栏
+├── views/                   # RuoYi 内置：各业务页面
+├── router/  store/  utils/  # RuoYi 内置
+├── components/              # 通用组件
+├── assets/                  # 图片、图标、SCSS 资源
+└── game-platform/           # ⭐ 站台 · 卡牌对战自定义模块
+    ├── GamePlatform.vue     # 平台主入口（含嵌入的子视图）
+    ├── views/
+    │   ├── GameTable.vue    # ⭐ 完整对局台（双方版面 + 手牌 + 侵蚀）
+    │   └── …                # 其余规则浏览、组卡、战绩等视图
+    ├── stores/              # decks / cards / game（Pinia）
+    ├── services/            # 与后端 ruoyi-game 通信的 axios 封装
+    ├── game/                # 26 个 .ts：纯前端状态计算、动画、派生
+    ├── components/          # 平台内的子组件（卡牌、弃牌堆…）
+    ├── catalog-types.ts     # 卡牌/牌组/效果的 DTO 类型
+    ├── types.ts             # 全局 TS 类型
+    └── *.css                # 平台专用样式（rules-table / mulligan …）
 ```
 
-## 内置功能
+> **`game/` 目录说明**：这里的 26 个 TS 文件是前端本地维护的对局快照、动画队列、回合切换等逻辑。**任何 "什么时候扣 1 点侵蚀"、"什么时候切到对方回合"、"换牌怎么洗切"** 这些边角逻辑都在这里。
 
-1.  用户管理：用户是系统操作者，该功能主要完成系统用户配置。
-2.  部门管理：配置系统组织机构（公司、部门、小组），树结构展现支持数据权限。
-3.  岗位管理：配置系统用户所属担任职务。
-4.  菜单管理：配置系统菜单，操作权限，按钮权限标识等。
-5.  角色管理：角色菜单权限分配、设置角色按机构进行数据范围权限划分。
-6.  字典管理：对系统中经常使用的一些较为固定的数据进行维护。
-7.  参数管理：对系统动态配置常用参数。
-8.  通知公告：系统通知公告信息发布维护。
-9.  操作日志：系统正常操作日志记录和查询；系统异常信息日志记录和查询。
-10. 登录日志：系统登录日志记录查询包含登录异常。
-11. 在线用户：当前系统中活跃用户状态监控。
-12. 定时任务：在线（添加、修改、删除)任务调度包含执行结果日志。
-13. 代码生成：前后端代码的生成（java、html、xml、sql）支持CRUD下载 。
-14. 系统接口：根据业务代码自动生成相关的api接口文档。
-15. 服务监控：监视当前系统CPU、内存、磁盘、堆栈等相关信息。
-16. 缓存监控：对系统的缓存信息查询，命令统计等。
-17. 在线构建器：拖动表单元素生成相应的HTML代码。
-18. 连接池监视：监视当前系统数据库连接池状态，可进行分析SQL找出系统性能瓶颈。
+---
 
-## 在线体验
+## 4. 快速开始
 
-- admin/admin123  
-- 陆陆续续收到一些打赏，为了更好的体验已用于演示服务器升级。谢谢各位小伙伴。
+### 4.1 环境要求
 
-演示地址：http://vue.ruoyi.vip  
-文档地址：http://doc.ruoyi.vip
+- Node.js ≥ 18
+- npm / pnpm / yarn 任选
+- 后端仓库 [`zhanshuangHoutai`](https://github.com/shiki916/zhanshuangHoutai) 已能在 `http://localhost:8080` 启动
 
-## 演示图
+### 4.2 启动
 
-<table>
-    <tr>
-        <td><img src="https://oscimg.oschina.net/oscnet/cd1f90be5f2684f4560c9519c0f2a232ee8.jpg"/></td>
-        <td><img src="https://oscimg.oschina.net/oscnet/1cbcf0e6f257c7d3a063c0e3f2ff989e4b3.jpg"/></td>
-    </tr>
-    <tr>
-        <td><img src="https://oscimg.oschina.net/oscnet/up-8074972883b5ba0622e13246738ebba237a.png"/></td>
-        <td><img src="https://oscimg.oschina.net/oscnet/up-9f88719cdfca9af2e58b352a20e23d43b12.png"/></td>
-    </tr>
-    <tr>
-        <td><img src="https://oscimg.oschina.net/oscnet/up-39bf2584ec3a529b0d5a3b70d15c9b37646.png"/></td>
-        <td><img src="https://oscimg.oschina.net/oscnet/up-936ec82d1f4872e1bc980927654b6007307.png"/></td>
-    </tr>
-	<tr>
-        <td><img src="https://oscimg.oschina.net/oscnet/up-b2d62ceb95d2dd9b3fbe157bb70d26001e9.png"/></td>
-        <td><img src="https://oscimg.oschina.net/oscnet/up-d67451d308b7a79ad6819723396f7c3d77a.png"/></td>
-    </tr>	 
-    <tr>
-        <td><img src="https://oscimg.oschina.net/oscnet/5e8c387724954459291aafd5eb52b456f53.jpg"/></td>
-        <td><img src="https://oscimg.oschina.net/oscnet/644e78da53c2e92a95dfda4f76e6d117c4b.jpg"/></td>
-    </tr>
-	<tr>
-        <td><img src="https://oscimg.oschina.net/oscnet/up-8370a0d02977eebf6dbf854c8450293c937.png"/></td>
-        <td><img src="https://oscimg.oschina.net/oscnet/up-49003ed83f60f633e7153609a53a2b644f7.png"/></td>
-    </tr>
-	<tr>
-        <td><img src="https://oscimg.oschina.net/oscnet/up-d4fe726319ece268d4746602c39cffc0621.png"/></td>
-        <td><img src="https://oscimg.oschina.net/oscnet/up-c195234bbcd30be6927f037a6755e6ab69c.png"/></td>
-    </tr>
-    <tr>
-        <td><img src="https://oscimg.oschina.net/oscnet/b6115bc8c31de52951982e509930b20684a.jpg"/></td>
-        <td><img src="https://oscimg.oschina.net/oscnet/up-5e4daac0bb59612c5038448acbcef235e3a.png"/></td>
-    </tr>
-</table>
+```bash
+cd RuoYi-Vue3-master
+npm install            # 或 pnpm install / yarn
+npm run dev            # 启动开发服，默认 http://localhost:80
+```
 
+构建产物：
 
-## 若依前后端分离交流群
+```bash
+npm run build:prod     # 生产构建 → dist/
+npm run build:stage    # 预发构建
+npm run preview        # 本地预览构建产物
+```
 
-QQ群： [![加入QQ群](https://img.shields.io/badge/已满-937441-blue.svg)](https://jq.qq.com/?_wv=1027&k=5bVB1og) [![加入QQ群](https://img.shields.io/badge/已满-887144332-blue.svg)](https://jq.qq.com/?_wv=1027&k=5eiA4DH) [![加入QQ群](https://img.shields.io/badge/已满-180251782-blue.svg)](https://jq.qq.com/?_wv=1027&k=5AxMKlC) [![加入QQ群](https://img.shields.io/badge/已满-104180207-blue.svg)](https://jq.qq.com/?_wv=1027&k=51G72yr) [![加入QQ群](https://img.shields.io/badge/已满-186866453-blue.svg)](https://jq.qq.com/?_wv=1027&k=VvjN2nvu) [![加入QQ群](https://img.shields.io/badge/已满-201396349-blue.svg)](https://jq.qq.com/?_wv=1027&k=5vYAqA05) [![加入QQ群](https://img.shields.io/badge/已满-101456076-blue.svg)](https://jq.qq.com/?_wv=1027&k=kOIINEb5) [![加入QQ群](https://img.shields.io/badge/已满-101539465-blue.svg)](https://jq.qq.com/?_wv=1027&k=UKtX5jhs) [![加入QQ群](https://img.shields.io/badge/已满-264312783-blue.svg)](https://jq.qq.com/?_wv=1027&k=EI9an8lJ) [![加入QQ群](https://img.shields.io/badge/已满-167385320-blue.svg)](https://jq.qq.com/?_wv=1027&k=SWCtLnMz) [![加入QQ群](https://img.shields.io/badge/已满-104748341-blue.svg)](https://jq.qq.com/?_wv=1027&k=96Dkdq0k) [![加入QQ群](https://img.shields.io/badge/已满-160110482-blue.svg)](https://jq.qq.com/?_wv=1027&k=0fsNiYZt) [![加入QQ群](https://img.shields.io/badge/已满-170801498-blue.svg)](https://jq.qq.com/?_wv=1027&k=7xw4xUG1) [![加入QQ群](https://img.shields.io/badge/已满-108482800-blue.svg)](https://jq.qq.com/?_wv=1027&k=eCx8eyoJ) [![加入QQ群](https://img.shields.io/badge/已满-101046199-blue.svg)](https://jq.qq.com/?_wv=1027&k=SpyH2875) [![加入QQ群](https://img.shields.io/badge/已满-136919097-blue.svg)](https://jq.qq.com/?_wv=1027&k=tKEt51dz) [![加入QQ群](https://img.shields.io/badge/已满-143961921-blue.svg)](http://qm.qq.com/cgi-bin/qm/qr?_wv=1027&k=0vBbSb0ztbBgVtn3kJS-Q4HUNYwip89G&authKey=8irq5PhutrZmWIvsUsklBxhj57l%2F1nOZqjzigkXZVoZE451GG4JHPOqW7AW6cf0T&noverify=0&group_code=143961921) [![加入QQ群](https://img.shields.io/badge/已满-174951577-blue.svg)](http://qm.qq.com/cgi-bin/qm/qr?_wv=1027&k=ZFAPAbp09S2ltvwrJzp7wGlbopsc0rwi&authKey=HB2cxpxP2yspk%2Bo3WKTBfktRCccVkU26cgi5B16u0KcAYrVu7sBaE7XSEqmMdFQp&noverify=0&group_code=174951577) [![加入QQ群](https://img.shields.io/badge/已满-161281055-blue.svg)](http://qm.qq.com/cgi-bin/qm/qr?_wv=1027&k=Fn2aF5IHpwsy8j6VlalNJK6qbwFLFHat&authKey=uyIT%2B97x2AXj3odyXpsSpVaPMC%2Bidw0LxG5MAtEqlrcBcWJUA%2FeS43rsF1Tg7IRJ&noverify=0&group_code=161281055) [![加入QQ群](https://img.shields.io/badge/已满-138988063-blue.svg)](http://qm.qq.com/cgi-bin/qm/qr?_wv=1027&k=XIzkm_mV2xTsUtFxo63bmicYoDBA6Ifm&authKey=dDW%2F4qsmw3x9govoZY9w%2FoWAoC4wbHqGal%2BbqLzoS6VBarU8EBptIgPKN%2FviyC8j&noverify=0&group_code=138988063) [![加入QQ群](https://img.shields.io/badge/已满-151450850-blue.svg)](http://qm.qq.com/cgi-bin/qm/qr?_wv=1027&k=DkugnCg68PevlycJSKSwjhFqfIgrWWwR&authKey=pR1Pa5lPIeGF%2FFtIk6d%2FGB5qFi0EdvyErtpQXULzo03zbhopBHLWcuqdpwY241R%2F&noverify=0&group_code=151450850) [![加入QQ群](https://img.shields.io/badge/已满-224622315-blue.svg)](http://qm.qq.com/cgi-bin/qm/qr?_wv=1027&k=F58bgRa-Dp-rsQJThiJqIYv8t4-lWfXh&authKey=UmUs4CVG5OPA1whvsa4uSespOvyd8%2FAr9olEGaWAfdLmfKQk%2FVBp2YU3u2xXXt76&noverify=0&group_code=224622315) [![加入QQ群](https://img.shields.io/badge/已满-287842588-blue.svg)](http://qm.qq.com/cgi-bin/qm/qr?_wv=1027&k=Nxb2EQ5qozWa218Wbs7zgBnjLSNk_tVT&authKey=obBKXj6SBKgrFTJZx0AqQnIYbNOvBB2kmgwWvGhzxR67RoRr84%2Bus5OadzMcdJl5&noverify=0&group_code=287842588) [![加入QQ群](https://img.shields.io/badge/已满-187944233-blue.svg)](http://qm.qq.com/cgi-bin/qm/qr?_wv=1027&k=numtK1M_I4eVd2Gvg8qtbuL8JgX42qNh&authKey=giV9XWMaFZTY%2FqPlmWbkB9g3fi0Ev5CwEtT9Tgei0oUlFFCQLDp4ozWRiVIzubIm&noverify=0&group_code=187944233) [![加入QQ群](https://img.shields.io/badge/已满-228578329-blue.svg)](http://qm.qq.com/cgi-bin/qm/qr?_wv=1027&k=G6r5KGCaa3pqdbUSXNIgYloyb8e0_L0D&authKey=4w8tF1eGW7%2FedWn%2FHAypQksdrML%2BDHolQSx7094Agm7Luakj9EbfPnSTxSi2T1LQ&noverify=0&group_code=228578329) [![加入QQ群](https://img.shields.io/badge/已满-191164766-blue.svg)](http://qm.qq.com/cgi-bin/qm/qr?_wv=1027&k=GsOo-OLz53J8y_9TPoO6XXSGNRTgbFxA&authKey=R7Uy%2Feq%2BZsoKNqHvRKhiXpypW7DAogoWapOawUGHokJSBIBIre2%2FoiAZeZBSLuBc&noverify=0&group_code=191164766) [![加入QQ群](https://img.shields.io/badge/已满-174569686-blue.svg)](http://qm.qq.com/cgi-bin/qm/qr?_wv=1027&k=PmYavuzsOthVqfdAPbo4uAeIbu7Ttjgc&authKey=p52l8%2FXa4PS1JcEmS3VccKSwOPJUZ1ZfQ69MEKzbrooNUljRtlKjvsXf04bxNp3G&noverify=0&group_code=174569686) [![加入QQ群](https://img.shields.io/badge/已满-127358632-blue.svg)](http://qm.qq.com/cgi-bin/qm/qr?_wv=1027&k=M9y5NjAl44lAL_Vh2crmEehZU_PMU6KS&authKey=ZSDz8hEREWSaPuxQV3gEwqGIaGjfRNnkB4rJjf0IvXhrSUGSGwQFmBA%2Boe8HFxyl&noverify=0&group_code=127358632) [![加入QQ群](https://img.shields.io/badge/113071109-blue.svg)](http://qm.qq.com/cgi-bin/qm/qr?_wv=1027&k=UGnoqRcFRxUaX-JAUNrSDbPimKrllp4x&authKey=Bbzf8Bc0XaQhq5c4QOg46Uqngd%2FvtIixrLvCM1EkPf41diqKXKZqXVwAxHTxJ8R1&noverify=0&group_code=113071109) 点击按钮入群。
+### 4.3 接入后端
+
+`vite.config.js` 已经把 `/dev-api` 代理到 `http://localhost:8080`，所以只要**先**启后端（Spring Boot 监听 8080）**再**启前端，登录、调用都走代理，无跨域问题。
+
+如需切换后端地址，修改 `vite.config.js` 第 5 行：
+
+```js
+const baseUrl = 'http://localhost:8080' // 改成你的后端地址
+```
+
+或新建 `.env.development` / `.env.production`，将后端地址放进 `VITE_APP_BASE_API`，再让代码引用 `import.meta.env.VITE_APP_BASE_API`。
+
+---
+
+## 5. 未来如何扩展 / 接入新功能
+
+### 5.1 新增一个【业务菜单】
+
+1. 在 **后端 → 菜单管理** 录入：路由、组件路径、权限标识。
+2. 在 `src/views/` 下新建一个 `.vue` 文件，组件路径要和后端保持一致（如 `game/replay/index`）。
+3. 在 `src/api/` 下编写对应的 axios 方法。
+4. 在 `src/permission.js` 确认动态路由刷新后能命中你的组件名。
+
+### 5.2 新增一个【对战模式 / 新卡牌 / 新效果】
+
+所有**规则/动作/效果/解析**都由后端引擎承担：
+
+| 改的内容 | 前端要做的 | 后端要做的 |
+| --- | --- | --- |
+| 新增一种**起手规则** | 1）在 `views/GameTable.vue` 的 mode 下拉里加新值 2）传给 `game.start(..., mode)` | 在 `ruoyi-game/engine/start/` 加起始策略类 |
+| 新增一种**卡牌效果** | 一般**不用改**——前端只负责显示"我方执行 X，对方执行 Y" | 在 `ruoyi-game/engine/effect/` 加 EffectHandler，引擎自动派发 |
+| 新增一种**回合阶段** | 在 `src/game-platform/game/` 加阶段切换的纯函数 | 在 `engine/state/` 加状态机节点 |
+| 新增一种**伤害类型** | 调整 `services/` 里 fight 调用的 payload | 在 `engine/resolution/` 里落地判定 |
+
+> **原则**：前端尽量保持"薄"，把规则全部下沉到后端 `ruoyi-game`。任何"看起来很简单但前后端都要改"的改动，都应该**先在 `ruoyi-game` 加引擎类，再在前端补 UI**。
+
+### 5.3 新增独立模块（例如战绩 / 好友 / 商城）
+
+1. 后端：在 `ruoyi-system` 或新建 `ruoyi-xxx` 模块，写 Controller / Service / Mapper / SQL。
+2. 前端：在 `src/api/systemXxx.js` 加 axios，在 `src/views/systemXxx/` 加页面，在「菜单管理」注册。
+3. 如果页面需要嵌入对战台 iframe，按以下结构承载即可：
+
+```vue
+<!-- 在 src/views/game/embed.vue 中 -->
+<iframe :src="'/game-platform/table?matchId=' + id" class="full-iframe" />
+```
+
+### 5.4 打包上线
+
+```bash
+npm run build:prod            # 生成 dist/
+# 把 dist/ 整个目录丢到 Nginx / 静态服务器
+# Nginx 配置 try_files + 反代 /dev-api 到真正的后端即可
+```
+
+---
+
+## 6. 与后端的对接清单
+
+| 接口前缀 | 用途 | 后端 Controller |
+| --- | --- | --- |
+| `/dev-api/login` | 登录 | `RuoYi 内置 SysLoginController` |
+| `/dev-api/getInfo` | 取用户/权限 | `SysLoginController.getInfo` |
+| `/dev-api/game/**` | 对战相关 | `ruoyi-game/controller/*Controller` |
+
+> 登录/权限完全沿用 RuoYi 的 JWT 流程，前端无需改造任何鉴权代码，**只要 RuoYi 登录跑通，业务接口的 token 也能用**。
+
+---
+
+## 7. 常用脚本
+
+| 命令 | 说明 |
+| --- | --- |
+| `npm run dev` | 开发模式（默认 :80，自动打开浏览器） |
+| `npm run build:prod` | 生产构建 |
+| `npm run build:stage` | 预发构建 |
+| `npm run preview` | 预览构建产物 |
+
+---
+
+## 8. 仓库信息
+
+- 仓库地址：https://github.com/shiki916/zhanshuangFE
+- 配套后端：https://github.com/shiki916/zhanshuangHoutai
+- 基于框架：[RuoYi-Vue3 v3.9.2](https://gitee.com/y_project/RuoYi-Vue)
+- License：MIT（沿用 RuoYi）
